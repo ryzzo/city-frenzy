@@ -6,12 +6,18 @@ from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.textinput import TextInput
 
+from logic_new import Logic
+
+
 answer = []
 
 class MainPage(GridLayout):
     """First page of the App"""
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.country = ""
+        self.capital = ""
 
         self.cols = 1
 
@@ -35,12 +41,17 @@ class GamePage(GridLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.data = Logic()
+        self._capital = self.data.getCapital()
+        self._country = self.data.getCountry()
+
         self.cols = 1
 
         self.add_widget(Label(text="What is the capital city of"))
-        self.add_widget(Label(text="KENYA"))
+        self.add_widget(Label(text=self._country))
 
-        self.display = Label(text = "_____",halign='center', valign='middle', font_size=30)
+        self.data.initialOutput()
+        self.display = Label(text = self.data.display_output,halign='center', valign='middle', font_size=30)
         self.add_widget(self.display)
 
         input_area = GridLayout(cols=3)
@@ -57,13 +68,13 @@ class GamePage(GridLayout):
 
     def checkButton(self, instance):
         letter = self.user_input.text
+        index = self.data.checkInput(letter)
+        if index == False:
+            pass
+        else:
+            self.data.insertLetter()
 
-        answer.append(letter)
-
-        # join the contents of the list
-        dis = ''.join(answer)
-
-        self.display.text = dis
+        self.display.text = self.data.display_output
 
 
 class CapitalApp(App):
